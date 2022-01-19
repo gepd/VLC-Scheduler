@@ -61,10 +61,21 @@ async def player_coro(player, rebuild_events_queue, extra_items_queue, ping_urls
 
             if item.path != current_item_path:
                 # VLC occasionally chokes on playlists and keeps playing what it was playing
+                lock_file = "%s.lock" % item.path.lower()
+                is_locked = os.path.isfile(lock_file)
+
                 if item.path.lower().endswith(config.PLAYLIST_EXTENSIONS):
                     player.empty()
-                
-                player.add(item.path)
+
+                if(not item.source.play_once or (not is_locked and item.source.play_once)):
+                    player.add(item.path)
+
+                    if(item.source.play_once):
+                        try:
+                            open(lock_file, mode='w').close()
+                            logger.info("Created locked file %s" % item.path)
+                        except OSError:
+                            logger.info('Failed creating file %s' % item.path)
 
             if play_duration < 0:
                 # <0 means play the first abs(play_duration) seconds.

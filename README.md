@@ -90,6 +90,8 @@ Example: `item_play_duration: 120` (120 seconds = 2 minutes).
 
 **`play_every_minutes: minutes`** — *(optional)* the content will be played only after X minutes. Such content is internally referred to as “ads”. If there is no content other than the “ads”, VLC Scheduler won’t play anything. VLC Scheduler doesn’t “pause” the currently playing media file to play “ads” — instead it waits for the media file to complete. The use of this parameter in conjunction with `special: true` is not supported. Example: `play_every_minutes: 30`.
 
+**`play_once: true/false`** — *(optional)* if set to `true`, it generates a file with the same name of the source file with the extension `.lock`, this will prevent to play the same file more than one time. To revert this behavior and play the file again, remove the lock file. Default: `false`.
+
 #### General configuration
 
 These parameters are set globally.

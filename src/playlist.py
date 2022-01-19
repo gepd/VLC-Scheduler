@@ -42,6 +42,7 @@ class Playlist:
             recursive=bool(source.get('recursive', self._recursive)),
             item_play_duration=int(source.get('item_play_duration', 0)),
             play_every_minutes=int(source.get('play_every_minutes', 0)),
+            play_once=source.get('play_once', False),
             start_time=None,
             end_time=None
         )
