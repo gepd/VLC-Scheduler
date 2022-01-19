@@ -26,7 +26,7 @@ async def watchgod_coro(path, action):
 async def schedule_coro():
     while True:
         schedule.run_pending()
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.5)
 
 
 async def player_coro(player, rebuild_events_queue, extra_items_queue, ping_urls=None):
@@ -84,7 +84,7 @@ async def player_coro(player, rebuild_events_queue, extra_items_queue, ping_urls
                 # from where it left off, then repeat at the start,
                 # for a total of .abs(play_duration) seconds.
                 # If the length can't be determined, default to abs(play_duration).
-                await asyncio.sleep(0.25)
+                await asyncio.sleep(0.75)
                 actual_duration = player.status().get('length', 0)
 
                 if actual_duration <= 0:
@@ -93,7 +93,7 @@ async def player_coro(player, rebuild_events_queue, extra_items_queue, ping_urls
 
             if play_duration == 0:
                 # 0 means "play until it done"
-                await asyncio.sleep(0.25)
+                await asyncio.sleep(0.75)
                 play_duration = player.status().get('length', 0)
 
                 if play_duration <= 0:
@@ -129,6 +129,12 @@ async def player_coro(player, rebuild_events_queue, extra_items_queue, ping_urls
                 if result:  # we have a new playlist
                     playlist = result
                     current_item_path = None
+
+                    time_left = play_duration - (time.time() - start_time)
+                    logger.info('Waiting for %s to finish... %i more seconds...' % (
+                        item.path, time_left))
+                    await asyncio.sleep(time_left)
+
                     player.empty()
 
             for task in pending:
@@ -216,7 +222,7 @@ async def main_coro():
         times = playlist.get_rebuild_schedule()
         for time in times:
             # schedule doesn't support time objects
-            time_str = time.strftime('%H:%M')  # schedule doesn't support time objects
+            time_str = time.strftime('%H:%M')
             if time_str not in rebuild_schedule:
 
                 rebuild_schedule.append(time_str)
