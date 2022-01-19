@@ -1,7 +1,7 @@
-PyYAML==3.13
+PyYAML==6.0
 PyInstaller==3.3.1
-watchgod==0.2
+watchgod==0.7
 requests==2.19.1
-schedule==0.5.0
+schedule==1.1.0
 click==6.7
 coloredlogs==10.0
