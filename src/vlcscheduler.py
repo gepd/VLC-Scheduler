@@ -252,10 +252,8 @@ def main():
     logger.info('VLC Scheduler v%s started.' % version.VERSION)
 
     if sys.platform == 'win32':
-        loop = asyncio.ProactorEventLoop()
+        loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-
-    loop = asyncio.get_event_loop()
 
     try:
         loop.run_until_complete(main_coro())
