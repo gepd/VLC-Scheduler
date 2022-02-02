@@ -37,6 +37,7 @@ class Playlist:
     def prepare_source(self, source):
         prepared = types.SimpleNamespace(
             active=True,
+            queue=False,
             path=source['path'],
             shuffle=bool(source.get('shuffle', False)),
             recursive=bool(source.get('recursive', self._recursive)),
@@ -57,7 +58,8 @@ class Playlist:
 
     def add_source(self, *sources):
         for source in sources:
-            self._sources.append(self.prepare_source(source))
+            prepared = self.prepare_source(source)
+            self._sources.append(prepared)
 
     def get_sources(self):
         return self._sources

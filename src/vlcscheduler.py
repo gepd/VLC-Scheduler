@@ -68,7 +68,11 @@ async def player_coro(player, rebuild_events_queue, extra_items_queue, ping_urls
                     player.empty()
 
                 if(not item.source.play_once or (not is_locked and item.source.play_once)):
-                    player.add(item.path)
+                    if(item.source.queue):
+                        player.enqueue(item.path)
+                        player.next()
+                    else:
+                        player.add(item.path)
 
                     if(item.source.play_once):
                         try:
@@ -197,16 +201,17 @@ async def main_coro():
                     logger.warning(
                         'Ads will run only when there is other content.')
             else:
-                for item in adverts_playlist.get_items():
-                    logger.info((
-                        'Scheduling {0.path} to run every {0.source.play_every_minutes} minute(s).'
-                    ).format(item))
+                def do_action():
+                    for item in adverts_playlist.get_items():
+                        logger.info((
+                            'Scheduling {0.path} to run every {0.source.play_every_minutes} minute(s).'
+                        ).format(item))
 
-                    def enqueue(item=item):
-                        return periodic_items_queue.put_nowait(item)
+                        item.source.queue = True
 
-                    schedule.every(item.source.play_every_minutes).minutes.do(
-                        enqueue).tag('ads')
+                        periodic_items_queue.put_nowait(item)
+
+                schedule.every(5).minutes.do(do_action).tag('ads')
         else:
             logger.info('Playing %s playlist instead of everything else.' %
                         special_playlist.name)
