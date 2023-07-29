@@ -255,9 +255,9 @@ async def main_coro():
 @click.version_option(version.VERSION)
 def main():
     logger.info('VLC Scheduler v%s started.' % version.VERSION)
-
+    loop = asyncio.new_event_loop()
+   
     if sys.platform == 'win32':
-        loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
     try:
